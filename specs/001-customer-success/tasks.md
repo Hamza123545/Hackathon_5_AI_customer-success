@@ -168,8 +168,8 @@
 - [x] T050 [US1] Create backend/agent/customer_success_agent.py with OpenAI Agents initialization (OpenAI() client, Agent definition)
 - [x] T051 [US1] Create backend/agent/prompts.py with system prompt including channel awareness, escalation triggers (pricing, refund, legal, profanity, anger, human request), response length limits (Email ≤ 500 words, WhatsApp ≤ 300 chars, Web ≤ 300 words)
 - [x] T052 [US1] Implement agent.run() method in backend/agent/customer_success_agent.py with tool binding and context variables (customer_id, conversation_id, channel, ticket_subject)
-- [ ] T053 [US1] Create backend/agent/formatters.py with format_response_for_channel() function (HTML email, plain text WhatsApp, formatted JSON web)
-- [ ] T054 [US1] Implement sentiment analysis in backend/agent/formatters.py (profanity detection, urgency keywords, sentiment_score -1.0 to 1.0)
+- [x] T053 [US1] Create backend/agent/formatters.py with format_response_for_channel() function (HTML email, plain text WhatsApp, formatted JSON web)
+- [x] T054 [US1] Implement sentiment analysis in backend/agent/formatters.py (profanity detection, urgency keywords, sentiment_score -1.0 to 1.0)
 
 #### Channel Handlers
 
