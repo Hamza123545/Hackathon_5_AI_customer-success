@@ -61,29 +61,29 @@
 
 ### Backend Setup
 
-- [ ] T001 Create backend/ folder structure (agent/, channels/, workers/, api/, database/, tests/, k8s/)
-- [ ] T002 Initialize Python 3.11+ project with pyproject.toml in backend/
-- [ ] T003 [P] Create backend/requirements.txt with dependencies: fastapi, uvicorn, asyncpg, pgvector, aiokafka, openai, twilio, google-api-python-client, pydantic, pytest, pytest-asyncio, locust
-- [ ] T004 [P] Create backend/Dockerfile for multi-stage build (API + Worker images)
-- [ ] T005 [P] Create backend/docker-compose.yml for local development (PostgreSQL, Kafka, Redis)
-- [ ] T006 [P] Create backend/.env.example template with all required environment variables (OPENAI_API_KEY, POSTGRES_*, GMAIL_*, TWILIO_*, KAFKA_*)
-- [ ] T007 Create backend/tests/__init__.py and configure pytest with asyncio mode
-- [ ] T008 [P] Create backend/tests/conftest.py with asyncpg test database fixture and Kafka test container fixture
+- [x] T001 Create backend/ folder structure (agent/, channels/, workers/, api/, database/, tests/, k8s/)
+- [x] T002 Initialize Python 3.11+ project with pyproject.toml in backend/
+- [x] T003 [P] Create backend/requirements.txt with dependencies: fastapi, uvicorn, asyncpg, pgvector, aiokafka, openai, twilio, google-api-python-client, pydantic, pytest, pytest-asyncio, locust
+- [x] T004 [P] Create backend/Dockerfile for multi-stage build (API + Worker images)
+- [x] T005 [P] Create backend/docker-compose.yml for local development (PostgreSQL, Kafka, Redis)
+- [x] T006 [P] Create backend/.env.example template with all required environment variables (OPENAI_API_KEY, POSTGRES_*, GMAIL_*, TWILIO_*, KAFKA_*)
+- [x] T007 Create backend/tests/__init__.py and configure pytest with asyncio mode
+- [x] T008 [P] Create backend/tests/conftest.py with asyncpg test database fixture and Kafka test container fixture
 
 ### Frontend Setup
 
-- [ ] T009 [P] Initialize Next.js project in frontend/ folder (npx create-next-app@latest or manual setup)
-- [ ] T010 [P] Create frontend/package.json with dependencies: react, next, axios, swr (optional), tailwindcss (optional)
-- [ ] T011 [P] Create frontend/next.config.js with API configuration (rewrites for API proxy if needed)
-- [ ] T012 [P] Create frontend/.env.example template with frontend environment variables (NEXT_PUBLIC_API_URL, NEXT_PUBLIC_APP_NAME)
-- [ ] T013 [P] Create frontend/Dockerfile for multi-stage build (node:18-alpine → build → nginx:alpine)
-- [ ] T014 [P] Create frontend/src/lib/ folder structure (apiClient.js, utils.js)
-- [ ] T015 [P] Create frontend/src/components/ folder for React components
+- [x] T009 [P] Initialize Next.js project in frontend/ folder (npx create-next-app@latest or manual setup)
+- [x] T010 [P] Create frontend/package.json with dependencies: react, next, axios, swr (optional), tailwindcss (optional)
+- [x] T011 [P] Create frontend/next.config.js with API configuration (rewrites for API proxy if needed)
+- [x] T012 [P] Create frontend/.env.example template with frontend environment variables (NEXT_PUBLIC_API_URL, NEXT_PUBLIC_APP_NAME)
+- [x] T013 [P] Create frontend/Dockerfile for multi-stage build (node:18-alpine → build → nginx:alpine)
+- [x] T014 [P] Create frontend/src/lib/ folder structure (apiClient.js, utils.js)
+- [x] T015 [P] Create frontend/src/components/ folder for React components
 
 ### Shared Documentation Setup
 
-- [ ] T016 [P] Create docs/ folder
-- [ ] T017 [P] Create docs/README.md with project overview and folder structure explanation
+- [x] T016 [P] Create docs/ folder
+- [x] T017 [P] Create docs/README.md with project overview and folder structure explanation
 
 **Checkpoint**: Backend and frontend project structures ready, dependencies declared, local development environments configured
 
@@ -97,31 +97,31 @@
 
 ### Database Layer (PostgreSQL + pgvector)
 
-- [ ] T018 Create backend/database/schema.sql with all tables (customers, customer_identifiers, conversations, messages, tickets, knowledge_base, escalations, channel_configs, agent_metrics)
-- [ ] T019 [P] Create backend/database/migrations/001_initial_schema.sql with CREATE INDEX statements for performance (idx_customers_email, idx_customer_identifiers_value, idx_conversations_customer, idx_messages_conversation, idx_knowledge_embedding)
-- [ ] T020 [P] Create backend/database/queries.py with asyncpg connection pool singleton (get_db_pool() function)
-- [ ] T021 [P] Implement CustomerRepository in backend/database/queries.py (create_customer, get_customer_by_email, get_customer_by_phone, link_identifier)
-- [ ] T022 [P] Implement CustomerIdentifierRepository in backend/database/queries.py (create_identifier, get_identifiers_by_customer_id, verify_identifier)
-- [ ] T023 [P] Implement ConversationRepository in backend/database/queries.py (create_conversation, get_conversation_with_messages, get_active_conversation, update_conversation_status)
-- [ ] T024 [P] Implement MessageRepository in backend/database/queries.py (create_message, get_messages_by_conversation, get_last_20_messages_by_customer)
-- [ ] T025 [P] Implement TicketRepository in backend/database/queries.py (create_ticket, get_ticket_by_id, update_ticket_status)
-- [ ] T026 [P] Implement KnowledgeBaseRepository in backend/database/queries.py with pgvector similarity search (search_articles, seed_articles_with_embeddings)
-- [ ] T027 [P] Implement EscalationRepository in backend/database/queries.py (create_escalation, update_escalation_status)
-- [ ] T028 [P] Implement AgentMetricsRepository in backend/database/queries.py (record_metric, get_metrics_by_channel)
+- [x] T018 Create backend/database/schema.sql with all tables (customers, customer_identifiers, conversations, messages, tickets, knowledge_base, escalations, channel_configs, agent_metrics)
+- [x] T019 [P] Create backend/database/migrations/001_initial_schema.sql with CREATE INDEX statements for performance (idx_customers_email, idx_customer_identifiers_value, idx_conversations_customer, idx_messages_conversation, idx_knowledge_embedding)
+- [x] T020 [P] Create backend/database/queries.py with asyncpg connection pool singleton (get_db_pool() function)
+- [x] T021 [P] Implement CustomerRepository in backend/database/queries.py (create_customer, get_customer_by_email, get_customer_by_phone, link_identifier)
+- [x] T022 [P] Implement CustomerIdentifierRepository in backend/database/queries.py (create_identifier, get_identifiers_by_customer_id, verify_identifier)
+- [x] T023 [P] Implement ConversationRepository in backend/database/queries.py (create_conversation, get_conversation_with_messages, get_active_conversation, update_conversation_status)
+- [x] T024 [P] Implement MessageRepository in backend/database/queries.py (create_message, get_messages_by_conversation, get_last_20_messages_by_customer)
+- [x] T025 [P] Implement TicketRepository in backend/database/queries.py (create_ticket, get_ticket_by_id, update_ticket_status)
+- [x] T026 [P] Implement KnowledgeBaseRepository in backend/database/queries.py with pgvector similarity search (search_articles, seed_articles_with_embeddings)
+- [x] T027 [P] Implement EscalationRepository in backend/database/queries.py (create_escalation, update_escalation_status)
+- [x] T028 [P] Implement AgentMetricsRepository in backend/database/queries.py (record_metric, get_metrics_by_channel)
 
 ### Event Streaming (Kafka)
 
-- [ ] T029 Create backend/workers/kafka_config.py with topic definitions (TICKETS_INCOMING, ESCALATIONS, METRICS, DLQ) and bootstrap servers configuration
-- [ ] T030 [P] Implement KafkaProducerManager in backend/workers/kafka_config.py with AIOKafkaProducer, enable_idempotence=True, serialization
-- [ ] T031 [P] Implement KafkaConsumerManager in backend/workers/kafka_config.py with AIOKafkaConsumer, group_id="fte-message-processor", enable_auto_commit=False
-- [ ] T032 Implement publish_event() utility in backend/workers/kafka_config.py with error handling and retry logic (3 attempts with exponential backoff)
+- [x] T029 Create backend/workers/kafka_config.py with topic definitions (TICKETS_INCOMING, ESCALATIONS, METRICS, DLQ) and bootstrap servers configuration
+- [x] T030 [P] Implement KafkaProducerManager in backend/workers/kafka_config.py with AIOKafkaProducer, enable_idempotence=True, serialization
+- [x] T031 [P] Implement KafkaConsumerManager in backend/workers/kafka_config.py with AIOKafkaConsumer, group_id="fte-message-processor", enable_auto_commit=False
+- [x] T032 Implement publish_event() utility in backend/workers/kafka_config.py with error handling and retry logic (3 attempts with exponential backoff)
 
 ### Configuration & Secrets (Kubernetes)
 
-- [ ] T033 Create backend/k8s/namespace.yaml with customer-success-fte namespace
-- [ ] T034 [P] Create backend/k8s/configmap.yaml with environment variables (LOG_LEVEL, KAFKA_BOOTSTRAP_SERVERS, POSTGRES_HOST, POSTGRES_DB, POSTGRES_USER, channel configs)
-- [ ] T035 [P] Create backend/k8s/secrets.yaml template (ftype: Opaque) with placeholders for OPENAI_API_KEY, POSTGRES_PASSWORD, GMAIL_CREDENTIALS, TWILIO_*
-- [ ] T036 [P] Create backend/k8s/postgres-statefulset.yaml for PostgreSQL 16 with pgvector extension (PVC PersistentVolumeClaim)
+- [x] T033 Create backend/k8s/namespace.yaml with customer-success-fte namespace
+- [x] T034 [P] Create backend/k8s/configmap.yaml with environment variables (LOG_LEVEL, KAFKA_BOOTSTRAP_SERVERS, POSTGRES_HOST, POSTGRES_DB, POSTGRES_USER, channel configs)
+- [x] T035 [P] Create backend/k8s/secrets.yaml template (ftype: Opaque) with placeholders for OPENAI_API_KEY, POSTGRES_PASSWORD, GMAIL_CREDENTIALS, TWILIO_*
+- [x] T036 [P] Create backend/k8s/postgres-statefulset.yaml for PostgreSQL 16 with pgvector extension (PVC PersistentVolumeClaim)
 
 ### Error Handling & Logging
 
