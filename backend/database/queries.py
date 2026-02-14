@@ -96,6 +96,15 @@ class ConversationRepository(BaseRepository):
             """, conversation_id, status)
             return dict(row)
 
+    async def update_sentiment(self, conversation_id: str, score: float) -> Dict:
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow("""
+                UPDATE conversations SET sentiment_score = $2
+                WHERE id = $1
+                RETURNING *
+            """, conversation_id, score)
+            return dict(row)
+
 class MessageRepository(BaseRepository):
     async def create_message(self, conversation_id: str, channel: str, direction: str, role: str, content: str, tool_calls: Optional[Dict] = None) -> Dict:
         async with self.pool.acquire() as conn:
@@ -112,9 +121,18 @@ class MessageRepository(BaseRepository):
                 SELECT m.* FROM messages m
                 JOIN conversations c ON m.conversation_id = c.id
                 WHERE c.customer_id = $1
-                ORDER BY m.created_at DESC
+                ORDER BY m.created_at ASC
                 LIMIT 20
             """, customer_id)
+            return [dict(row) for row in rows]
+
+    async def get_history_by_conversation_id(self, conversation_id: str) -> List[Dict]:
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch("""
+                SELECT * FROM messages 
+                WHERE conversation_id = $1
+                ORDER BY created_at ASC
+            """, conversation_id)
             return [dict(row) for row in rows]
 
 class TicketRepository(BaseRepository):

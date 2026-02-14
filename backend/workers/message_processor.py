@@ -155,16 +155,15 @@ class MessageProcessor:
                 content=content,
                 # metadata...
             )
+
+            # Analyze Sentiment
+            from agent.sentiment import analyze_sentiment
+            sentiment_score = analyze_sentiment(content)
+            await conv_repo.update_sentiment(conversation_id, sentiment_score)
         
         # 4. Invoke Agent
         # Retrieve history
-        # We can use the tool logic or just the repo directly. 
-        # The agent prompts.py says "ALWAYS check get_customer_history first". 
-        # The agent might call the tool, OR we pass it in context. 
-        # Making it available in context is faster.
-        
-        # history = await msg_repo.get_last_20_messages(conversation_id) 
-        # (ignoring explicit hist fetch here, relying on Agent tool usage or context injection if we modify agent)
+        history = await msg_repo.get_history_by_conversation_id(conversation_id)
         
         context = {
             "customer_id": customer_id,
@@ -173,7 +172,7 @@ class MessageProcessor:
             "customer_name": customer_name or customer.get("name")
         }
         
-        agent_response_text = await self.agent.run(content, context)
+        agent_response_text = await self.agent.run(history, context)
         
         # 5. Store Outbound Message
         await msg_repo.create_message(

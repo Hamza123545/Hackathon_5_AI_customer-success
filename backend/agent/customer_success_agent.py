@@ -13,13 +13,14 @@ class CustomerSuccessAgent:
         self.client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.model = "gpt-4-turbo-preview" # Or gpt-3.5-turbo if cost is a concern
 
-    async def run(self, message: str, context: Dict[str, Any]) -> str:
+    async def run(self, history: List[Dict[str, Any]], context: Dict[str, Any]) -> Any:
         """
         Runs the agent loop:
         1. Formats system prompt with context.
-        2. Calls OpenAI API with tools.
-        3. Executes tools if requested.
-        4. returns final response.
+        2. Prepares message history (mapping DB roles to OpenAI roles).
+        3. Calls OpenAI API with tools.
+        4. Executes tools if requested.
+        5. Returns final response.
         """
         customer_id = context.get("customer_id", "unknown")
         conversation_id = context.get("conversation_id", "unknown")
@@ -31,16 +32,26 @@ class CustomerSuccessAgent:
             conversation_id=conversation_id
         )
 
-        messages = [
-            {"role": "system", "content": system_instruction},
-            {"role": "user", "content": message}
-        ]
+        # 1. Start with system prompt
+        messages = [{"role": "system", "content": system_instruction}]
 
-        # TODO: Inject history here if not handled by get_customer_history tool implicitly
-        # (Though the tool is better for "retrieving" history, passing recent history 
-        # in `messages` is better for immediate context).
-        # We will assume the `message_processor` passes a few recent messages in `context` or we prepend them.
-        
+        # 2. Append history
+        # Expecting history items to have keys: 'role', 'content'
+        # DB roles: 'customer', 'agent', 'system' -> OpenAI: 'user', 'assistant', 'system'
+        for msg in history:
+            role_map = {
+                "customer": "user",
+                "agent": "assistant",
+                "system": "system"
+            }
+            # Default to 'user' if unknown, or keep as is if already correct
+            role = role_map.get(msg.get("role"), msg.get("role", "user"))
+            
+            messages.append({
+                "role": role, 
+                "content": msg.get("content", "")
+            })
+
         try:
             response = await self.client.chat.completions.create(
                 model=self.model,
@@ -64,21 +75,11 @@ class CustomerSuccessAgent:
                     if function_name in AVAILABLE_TOOLS:
                         function_to_call = AVAILABLE_TOOLS[function_name]
                         
-                        # Inject IDs into args if missing and required by the tool Pydantic model
+                        # Inject IDs into args if missing
                         if "customer_id" in function_args and not function_args["customer_id"]:
                              function_args["customer_id"] = customer_id
                         if "conversation_id" in function_args and not function_args["conversation_id"]:
                              function_args["conversation_id"] = conversation_id
-                        
-                        # We need to construct the input object expected by validation, 
-                        # but our wrappers in available_tools accept the raw dict or pydantic model?
-                        # In tools.py, we defined: async def search_knowledge_base(args: KnowledgeSearchInput)
-                        # So we need to instantiate the model.
-                        
-                        # Quick helper to bind args to the Pydantic model
-                        # For MVP simplicity, let's assume `function_to_call` can handle the dict 
-                        # OR we explicitly handle it here. 
-                        # Let's adjust this logic to pass the Pydantic model.
                         
                         from agent.tools import KnowledgeSearchInput, TicketInput, CustomerHistoryInput, EscalationInput
                         
@@ -111,6 +112,13 @@ class CustomerSuccessAgent:
                     model=self.model,
                     messages=messages
                 )
+                
+                # Return object with output and potential escalation status
+                # For now, just string content, but caller might need more.
+                # The message processor stores "result.output".
+                # If we need escalation flag, we might parse it or rely on the tool side effect.
+                # The 'escalate_to_human' tool updates the ticket status.
+                
                 return final_response.choices[0].message.content
             
             return assistant_message.content
