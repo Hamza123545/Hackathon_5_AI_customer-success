@@ -156,18 +156,18 @@
 
 #### Agent Tools (OpenAI Agents SDK with @function_tool)
 
-- [ ] T044 [P] [US1] Create backend/agent/tools.py with Pydantic input models (KnowledgeSearchInput, TicketInput, CustomerHistoryInput, EscalationInput, ResponseInput)
-- [ ] T045 [P] [US1] Implement search_knowledge_base tool with @function_tool decorator in backend/agent/tools.py (pgvector similarity search via KnowledgeBaseRepository)
-- [ ] T046 [P] [US1] Implement create_ticket tool with @function_tool decorator in backend/agent/tools.py (via TicketRepository, stores in tickets table)
-- [ ] T047 [P] [US1] Implement get_customer_history tool with @function_tool decorator in backend/agent/tools.py (via MessageRepository, retrieves last 20 messages across ALL channels)
-- [ ] T048 [P] [US1] Implement escalate_to_human tool with @function_tool decorator in backend/agent/tools.py (via EscalationRepository, publishes to fte.escalations topic)
-- [ ] T049 [P] [US1] Implement send_response tool with @function_tool decorator in backend/agent/tools.py (calls appropriate channel handler)
+- [x] T044 [P] [US1] Create backend/agent/tools.py with Pydantic input models (KnowledgeSearchInput, TicketInput, CustomerHistoryInput, EscalationInput, ResponseInput)
+- [x] T045 [P] [US1] Implement search_knowledge_base tool with @function_tool decorator in backend/agent/tools.py (pgvector similarity search via KnowledgeBaseRepository)
+- [x] T046 [P] [US1] Implement create_ticket tool with @function_tool decorator in backend/agent/tools.py (via TicketRepository, stores in tickets table)
+- [x] T047 [P] [US1] Implement get_customer_history tool with @function_tool decorator in backend/agent/tools.py (via MessageRepository, retrieves last 20 messages across ALL channels)
+- [x] T048 [P] [US1] Implement escalate_to_human tool with @function_tool decorator in backend/agent/tools.py (via EscalationRepository, publishes to fte.escalations topic)
+- [x] T049 [P] [US1] Implement send_response tool with @function_tool decorator in backend/agent/tools.py (calls appropriate channel handler)
 
 #### Agent Definition & System Prompt
 
-- [ ] T050 [US1] Create backend/agent/customer_success_agent.py with OpenAI Agents initialization (OpenAI() client, Agent definition)
-- [ ] T051 [US1] Create backend/agent/prompts.py with system prompt including channel awareness, escalation triggers (pricing, refund, legal, profanity, anger, human request), response length limits (Email ≤ 500 words, WhatsApp ≤ 300 chars, Web ≤ 300 words)
-- [ ] T052 [US1] Implement agent.run() method in backend/agent/customer_success_agent.py with tool binding and context variables (customer_id, conversation_id, channel, ticket_subject)
+- [x] T050 [US1] Create backend/agent/customer_success_agent.py with OpenAI Agents initialization (OpenAI() client, Agent definition)
+- [x] T051 [US1] Create backend/agent/prompts.py with system prompt including channel awareness, escalation triggers (pricing, refund, legal, profanity, anger, human request), response length limits (Email ≤ 500 words, WhatsApp ≤ 300 chars, Web ≤ 300 words)
+- [x] T052 [US1] Implement agent.run() method in backend/agent/customer_success_agent.py with tool binding and context variables (customer_id, conversation_id, channel, ticket_subject)
 - [ ] T053 [US1] Create backend/agent/formatters.py with format_response_for_channel() function (HTML email, plain text WhatsApp, formatted JSON web)
 - [ ] T054 [US1] Implement sentiment analysis in backend/agent/formatters.py (profanity detection, urgency keywords, sentiment_score -1.0 to 1.0)
 
