@@ -215,15 +215,15 @@
 
 #### Message Processing Layer (Worker Pods)
 
-- [ ] T086 [US1] Create backend/workers/message_processor.py with Kafka consumer initialization (consume fte.tickets.incoming topic)
-- [ ] T087 [US1] Implement process_message() async function in backend/workers/message_processor.py (resolve/create customer via CustomerRepository, get/create conversation via ConversationRepository)
-- [ ] T088 [US1] Implement retrieve_customer_history() in backend/workers/message_processor.py (call get_customer_history tool, pass last 20 messages to agent)
-- [ ] T089 [US1] Implement run_agent() in backend/workers/message_processor.py (call agent.run() with tools, context variables, customer history)
-- [ ] T090 [US1] Implement store_inbound_message() in backend/workers/message_processor.py (via MessageRepository with direction='inbound', role='customer')
-- [ ] T091 [US1] Implement store_outbound_message() in backend/workers/message_processor.py (via MessageRepository with direction='outbound', role='agent', tokens_used, latency_ms)
-- [ ] T092 [US1] Implement publish_response() in backend/workers/message_processor.py (call send_response tool, publish to appropriate outbound topic)
-- [ ] T093 [US1] Implement error handling in backend/workers/message_processor.py (publish to fte.dlq topic on failure, log error, retry 3 times with exponential backoff)
-- [ ] T094 [US1] Implement consumer offset commit in backend/workers/message_processor.py (commit only after successful processing, enable exactly-once semantics)
+- [x] T086 [US1] Create backend/workers/message_processor.py with Kafka consumer initialization (consume fte.tickets.incoming topic)
+- [x] T087 [US1] Implement process_message() async function in backend/workers/message_processor.py (resolve/create customer via CustomerRepository, get/create conversation via ConversationRepository)
+- [x] T088 [US1] Implement retrieve_customer_history() in backend/workers/message_processor.py (call get_customer_history tool, pass last 20 messages to agent)
+- [x] T089 [US1] Implement run_agent() in backend/workers/message_processor.py (call agent.run() with tools, context variables, customer history)
+- [x] T090 [US1] Implement store_inbound_message() in backend/workers/message_processor.py (via MessageRepository with direction='inbound', role='customer')
+- [x] T091 [US1] Implement store_outbound_message() in backend/workers/message_processor.py (via MessageRepository with direction='outbound', role='agent', tokens_used, latency_ms)
+- [x] T092 [US1] Implement publish_response() in backend/workers/message_processor.py (call send_response tool, publish to appropriate outbound topic)
+- [x] T093 [US1] Implement error handling in backend/workers/message_processor.py (publish to fte.dlq topic on failure, log error, retry 3 times with exponential backoff)
+- [x] T094 [US1] Implement consumer offset commit in backend/workers/message_processor.py (commit only after successful processing, enable exactly-once semantics)
 
 #### Kubernetes Deployment (API & Worker)
 
