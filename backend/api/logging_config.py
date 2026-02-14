@@ -2,11 +2,26 @@ import logging
 import sys
 import json
 import os
+import re
 from datetime import datetime
 from typing import Dict, Any
 
+# Regex for PII
+EMAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+PHONE_REGEX = r'\b(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})\b'
+
 class JSONFormatter(logging.Formatter):
+    def redact(self, message: str) -> str:
+        """Redacts PII from the log message."""
+        message = re.sub(EMAIL_REGEX, "[EMAIL REDACTED]", message)
+        message = re.sub(PHONE_REGEX, "[PHONE REDACTED]", message)
+        return message
+
     def format(self, record: logging.LogRecord) -> str:
+        # Redact the message first
+        if isinstance(record.msg, str):
+            record.msg = self.redact(record.msg)
+            
         log_entry: Dict[str, Any] = {
             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
             "level": record.levelname,
