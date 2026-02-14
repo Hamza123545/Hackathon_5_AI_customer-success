@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(ls:*)",
+      "mcp__context7__resolve-library-id",
+      "Bash(D:Hackathon_5.specifyscriptspowershellcreate-new-feature.ps1 -Json \"now create a proper specification for this hackathon which should cover all specification use mcp context7 mcp server to get info\" -Number 1 -ShortName \"customer-success\")",
+      "Bash(powershell:*)",
+      "mcp__context7__query-docs"
+    ]
+  }
+}
