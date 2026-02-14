@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fte-message-processor
+  namespace: fte-namespace
+  labels:
+    app: fte-message-processor
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fte-message-processor
+  template:
+    metadata:
+      labels:
+        app: fte-message-processor
+    spec:
+      containers:
+      - name: fte-message-processor
+        image: fte-backend:latest
+        imagePullPolicy: IfNotPresent
+        command: ["python", "-m", "workers.message_processor"]
+        envFrom:
+        - configMapRef:
+            name: fte-config
+        - secretRef:
+            name: fte-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

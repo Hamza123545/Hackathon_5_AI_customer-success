@@ -227,12 +227,12 @@
 
 #### Kubernetes Deployment (API & Worker)
 
-- [ ] T095 [P] [US1] Create backend/k8s/deployment-api.yaml with fte-api deployment (3 replicas, resources 512Mi/250m → 1Gi/500m, health checks liveness 10s delay, readiness 5s delay)
-- [ ] T096 [P] [US1] Create backend/k8s/deployment-worker.yaml with fte-message-processor deployment (3 replicas, resources 512Mi/250m → 1Gi/500m, health checks)
-- [ ] T097 [P] [US1] Create backend/k8s/service.yaml for fte-api (Service type ClusterIP, port 80 targetPort 8000)
-- [ ] T098 [P] [US1] Create backend/k8s/hpa-api.yaml with Horizontal Pod Autoscaler for fte-api (min 3, max 20, target 70% CPU)
-- [ ] T099 [P] [US1] Create backend/k8s/hpa-worker.yaml with Horizontal Pod Autoscaler for fte-message-processor (min 3, max 30, target 70% CPU)
-- [ ] T100 [US1] Create backend/k8s/ingress.yaml with TLS (Let's Encrypt via cert-manager), host support-api.yourdomain.com, rules / path → fte-api:80
+- [x] T095 [US1] Create backend/k8s/deployment-api.yaml (Deployment: fte-api, Replicas: 3, Image: fte-backend:latest, LivenessProbe: /health, ReadinessProbe: /health, Resources: 250m/500m CPU, 256Mi/512Mi RAM)
+- [x] T096 [US1] Create backend/k8s/deployment-worker.yaml (Deployment: fte-message-processor, Replicas: 3, Image: fte-backend:latest, Command: ["python", "-m", "workers.message_processor"], Resources: 250m/500m CPU, 256Mi/512Mi RAM)
+- [x] T097 [US1] Create backend/k8s/service.yaml (Service: fte-api-service, Type: ClusterIP, Port: 80 -> 8000)
+- [x] T098 [US1] Create backend/k8s/hpa-api.yaml (HPA: fte-api-hpa, Min: 2, Max: 10, TargetCPU: 70%)
+- [x] T099 [US1] Create backend/k8s/hpa-worker.yaml (HPA: fte-worker-hpa, Min: 2, Max: 10, TargetCPU: 70%)
+- [x] T100 [US1] Create backend/k8s/ingress.yaml (Ingress: fte-ingress, Host: support-api.yourdomain.com, Path: /, Backend: fte-api-service:80)
 
 **Checkpoint**: User Story 1 complete - All 3 channels (Gmail, WhatsApp, Web Form) functional, customer identification across channels working, knowledge base search operational, escalation logic implemented. Frontend support form working. STOP and VALIDATE independently.
 
