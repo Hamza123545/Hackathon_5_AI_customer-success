@@ -1,128 +1,84 @@
 import os
-import json
 import logging
 from typing import Dict, Any, List
 from openai import AsyncOpenAI
+from agents import Agent, Runner
 from agent.prompts import SYSTEM_PROMPT
-from agent.tools import TOOL_DEFINITIONS, AVAILABLE_TOOLS
+from agent.tools import AGENT_TOOLS
 
 logger = logging.getLogger(__name__)
 
 class CustomerSuccessAgent:
     def __init__(self):
-        self.client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.model = "gpt-4-turbo-preview" # Or gpt-3.5-turbo if cost is a concern
+        # Configure for Gemini via OpenAI-compatible endpoint
+        self.client = AsyncOpenAI(
+            api_key=os.getenv("OPENAI_API_KEY"),
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+        )
+        
+        # Initialize the Agent
+        self.agent = Agent(
+            name="Customer Success FTE",
+            model="gemini-1.5-flash", # Using Gemini 1.5 Flash as requested/implied for speed/cost
+            instructions=SYSTEM_PROMPT, # Base instructions, context will be prepended/appended
+            tools=AGENT_TOOLS
+        )
 
-    async def run(self, history: List[Dict[str, Any]], context: Dict[str, Any]) -> Any:
+    async def run(self, history: List[Dict[str, Any]], context: Dict[str, Any]) -> str:
         """
-        Runs the agent loop:
-        1. Formats system prompt with context.
-        2. Prepares message history (mapping DB roles to OpenAI roles).
-        3. Calls OpenAI API with tools.
-        4. Executes tools if requested.
-        5. Returns final response.
+        Runs the agent loop using the OpenAI Agents SDK Runner.
         """
         customer_id = context.get("customer_id", "unknown")
         conversation_id = context.get("conversation_id", "unknown")
         channel = context.get("channel", "unknown")
 
-        system_instruction = SYSTEM_PROMPT.format(
-            channel=channel,
-            customer_id=customer_id,
-            conversation_id=conversation_id
-        )
+        # Dynamic context injection
+        # Since the Agent SDK 'instructions' are static or managed by the agent, 
+        # we can pass dynamic context as a system message or update instructions for this run?
+        # A common pattern is to prepend a system message with the context.
+        
+        context_instruction = f"""
+        Current Context:
+        - Customer ID: {customer_id}
+        - Conversation ID: {conversation_id}
+        - Channel: {channel}
+        """
+        
+        messages = [{"role": "system", "content": context_instruction}]
 
-        # 1. Start with system prompt
-        messages = [{"role": "system", "content": system_instruction}]
-
-        # 2. Append history
-        # Expecting history items to have keys: 'role', 'content'
-        # DB roles: 'customer', 'agent', 'system' -> OpenAI: 'user', 'assistant', 'system'
+        # Append history
         for msg in history:
             role_map = {
                 "customer": "user",
                 "agent": "assistant",
                 "system": "system"
             }
-            # Default to 'user' if unknown, or keep as is if already correct
             role = role_map.get(msg.get("role"), msg.get("role", "user"))
-            
             messages.append({
                 "role": role, 
                 "content": msg.get("content", "")
             })
 
         try:
-            response = await self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                tools=TOOL_DEFINITIONS,
-                tool_choice="auto"
-            )
-
-            assistant_message = response.choices[0].message
+            # Run the agent
+            # Note: The Runner typically manages the loop calls. 
+            # We pass the client explicitly if the SDK allows, otherwise it uses global or default?
+            # The SDK documentation (implied) suggests we might need to pass the client to the Runner 
+            # or the Agent. 
+            # If Agent constructor doesn't take client, maybe Runner does.
+            # Let's assume Runner can take `client=self.client` or we set it on the agent.
+            # A common pattern in these SDKs when using non-default client:
             
-            # Handle tool calls
-            if assistant_message.tool_calls:
-                messages.append(assistant_message) # Add the assistant's request to history
-                
-                for tool_call in assistant_message.tool_calls:
-                    function_name = tool_call.function.name
-                    function_args = json.loads(tool_call.function.arguments)
-                    
-                    logger.info(f"Agent calling tool: {function_name} with {function_args}")
-                    
-                    if function_name in AVAILABLE_TOOLS:
-                        function_to_call = AVAILABLE_TOOLS[function_name]
-                        
-                        # Inject IDs into args if missing
-                        if "customer_id" in function_args and not function_args["customer_id"]:
-                             function_args["customer_id"] = customer_id
-                        if "conversation_id" in function_args and not function_args["conversation_id"]:
-                             function_args["conversation_id"] = conversation_id
-                        
-                        from agent.tools import KnowledgeSearchInput, TicketInput, CustomerHistoryInput, EscalationInput
-                        
-                        tool_output = ""
-                        try:
-                            if function_name == "search_knowledge_base":
-                                input_data = KnowledgeSearchInput(**function_args)
-                                tool_output = await function_to_call(input_data)
-                            elif function_name == "create_ticket":
-                                input_data = TicketInput(**function_args)
-                                tool_output = await function_to_call(input_data)
-                            elif function_name == "get_customer_history":
-                                input_data = CustomerHistoryInput(**function_args)
-                                tool_output = await function_to_call(input_data)
-                            elif function_name == "escalate_to_human":
-                                input_data = EscalationInput(**function_args)
-                                tool_output = await function_to_call(input_data)
-                        except Exception as e:
-                            tool_output = json.dumps({"error": f"Tool execution error: {str(e)}"})
-                        
-                        messages.append({
-                            "tool_call_id": tool_call.id,
-                            "role": "tool",
-                            "name": function_name,
-                            "content": tool_output,
-                        })
-                
-                # Get final response after tool outputs
-                final_response = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages
-                )
-                
-                # Return object with output and potential escalation status
-                # For now, just string content, but caller might need more.
-                # The message processor stores "result.output".
-                # If we need escalation flag, we might parse it or rely on the tool side effect.
-                # The 'escalate_to_human' tool updates the ticket status.
-                
-                return final_response.choices[0].message.content
+            result = await Runner.run(self.agent, messages=messages, client=self.client)
             
-            return assistant_message.content
-
+            # The result object typically contains the final message or usage info.
+            # Let's assume result.final_output or similar.
+            # If result is just the final message text, great.
+            # If it's a generic Result object, we need to inspect it.
+            # For now, let's assume valid string return or attribute access.
+            
+            return result.final_output
+            
         except Exception as e:
             logger.error(f"Agent execution error: {e}", exc_info=True)
             return "I apologize, but I'm encountering a technical issue processing your request. Please try again later."
