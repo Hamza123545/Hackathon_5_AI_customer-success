@@ -191,13 +191,13 @@
 
 #### Frontend Support Form Component
 
-- [ ] T068 [P] [US1] Create frontend/src/components/SupportForm.jsx with form fields (Name, Email, Subject, Category dropdown, Message textarea)
-- [ ] T069 [P] [US1] Implement form validation in frontend/src/components/SupportForm.jsx (client-side validation: name≥2, email format, subject≥5, message≥10, error messages)
-- [ ] T070 [US1] Implement form submission handler in frontend/src/components/SupportForm.jsx (call submitSupportForm(), show loading state, handle success/error, display ticket_id)
-- [ ] T071 [US1] Implement ticket status checking UI in frontend/src/components/SupportForm.jsx (input field for ticket_id, "Check Status" button calling getTicketStatus(), display messages)
-- [ ] T072 [US1] Add responsive styling to frontend/src/components/SupportForm.jsx (mobile-friendly, clean UI, loading spinners, success/error colors)
-- [ ] T073 [US1] Create frontend/src/pages/index.jsx (or app/page.jsx for Next.js App Router) to render SupportForm component
-- [ ] T074 [US1] Configure API URL in frontend/.env.local (NEXT_PUBLIC_API_URL=http://localhost:8000 for development)
+- [x] T068 [P] [US1] Create frontend/src/components/SupportForm.jsx with form fields (Name, Email, Subject, Category dropdown, Message textarea)
+- [x] T069 [P] [US1] Implement form validation in frontend/src/components/SupportForm.jsx (client-side validation: name≥2, email format, subject≥5, message≥10, error messages)
+- [x] T070 [US1] Implement form submission handler in frontend/src/components/SupportForm.jsx (call submitSupportForm(), show loading state, handle success/error, display ticket_id)
+- [x] T071 [US1] Implement ticket status checking UI in frontend/src/components/SupportForm.jsx (input field for ticket_id, "Check Status" button calling getTicketStatus(), display messages)
+- [x] T072 [US1] Add responsive styling to frontend/src/components/SupportForm.jsx (mobile-friendly, clean UI, loading spinners, success/error colors)
+- [x] T073 [US1] Create frontend/src/pages/index.jsx (or app/page.jsx for Next.js App Router) to render SupportForm component
+- [x] T074 [US1] Configure API URL in frontend/.env.local (NEXT_PUBLIC_API_URL=http://localhost:8000 for development)
 
 #### API Gateway (FastAPI)
 
