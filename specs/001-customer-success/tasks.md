@@ -201,17 +201,17 @@
 
 #### API Gateway (FastAPI)
 
-- [ ] T075 [P] [US1] Create backend/api/main.py with FastAPI() application initialization
-- [ ] T076 [P] [US1] Implement POST /webhooks/gmail endpoint in backend/api/main.py (validate Pub/Sub signature, parse message, publish to Kafka, return 200 OK)
-- [ ] T077 [P] [US1] Implement POST /webhooks/whatsapp endpoint in backend/api/main.py (validate Twilio signature, parse form-data, publish to Kafka, return 200 OK with empty TwiML)
-- [ ] T078 [P] [US1] Implement POST /support/submit endpoint in backend/api/main.py (validate SupportFormSubmission via Pydantic, call submit_support_form(), return ticket_id)
-- [ ] T079 [P] [US1] Implement GET /support/ticket/{ticket_id} endpoint in backend/api/main.py (call get_ticket_status(), return messages JSON)
-- [ ] T080 [P] [US1] Implement GET /conversations/{conversation_id} endpoint in backend/api/main.py (retrieve conversation history with cross-channel context via ConversationRepository)
-- [ ] T081 [P] [US1] Implement GET /customers/lookup endpoint in backend/api/main.py (query params: email/phone, cross-channel lookup via CustomerIdentifierRepository)
-- [ ] T082 [P] [US1] Implement GET /metrics/channels endpoint in backend/api/main.py (return channel-specific metrics: response count, avg latency, escalation rate, avg sentiment via AgentMetricsRepository)
-- [ ] T083 [P] [US1] Implement GET /health endpoint in backend/api/main.py (return all channel status: email/active, whatsapp/active, web_form/active)
-- [ ] T084 [US1] Add CORSMiddleware to backend/api/main.py (allow_origins=["http://localhost:3000"] for development, configure for production)
-- [ ] T085 [US1] Implement structured JSON logging for all endpoints in backend/api/main.py (use logging_config.py, redact customer_id)
+- [x] T075 [P] [US1] Create backend/api/main.py with FastAPI() application initialization
+- [x] T076 [P] [US1] Implement POST /webhooks/gmail endpoint in backend/api/main.py (validate Pub/Sub signature, parse message, publish to Kafka, return 200 OK)
+- [x] T077 [P] [US1] Implement POST /webhooks/whatsapp endpoint in backend/api/main.py (validate Twilio signature, parse form-data, publish to Kafka, return 200 OK with empty TwiML)
+- [x] T078 [P] [US1] Implement POST /support/submit endpoint in backend/api/main.py (validate SupportFormSubmission via Pydantic, call submit_support_form(), return ticket_id)
+- [x] T079 [P] [US1] Implement GET /support/ticket/{ticket_id} endpoint in backend/api/main.py (call get_ticket_status(), return messages JSON)
+- [x] T080 [P] [US1] Implement GET /conversations/{conversation_id} endpoint in backend/api/main.py (retrieve conversation history with cross-channel context via ConversationRepository)
+- [x] T081 [P] [US1] Implement GET /customers/lookup endpoint in backend/api/main.py (query params: email/phone, cross-channel lookup via CustomerIdentifierRepository)
+- [x] T082 [P] [US1] Implement GET /metrics/channels endpoint in backend/api/main.py (return channel-specific metrics: response count, avg latency, escalation rate, avg sentiment via AgentMetricsRepository)
+- [x] T083 [P] [US1] Implement GET /health endpoint in backend/api/main.py (return all channel status: email/active, whatsapp/active, web_form/active)
+- [x] T084 [US1] Add CORSMiddleware to backend/api/main.py (allow_origins=["http://localhost:3000"] for development, configure for production)
+- [x] T085 [US1] Implement structured JSON logging for all endpoints in backend/api/main.py (use logging_config.py, redact customer_id)
 
 #### Message Processing Layer (Worker Pods)
 
