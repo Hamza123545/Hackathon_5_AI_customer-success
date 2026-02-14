@@ -125,16 +125,16 @@
 
 ### Error Handling & Logging
 
-- [ ] T037 Create backend/api/logging_config.py with structured JSON logger (timestamp, customer_id redacted, conversation_id, channel, event_type)
-- [ ] T038 [P] Implement error handlers in backend/api/errors.py (DatabaseConnectionError, KafkaPublishError, WebhookValidationError, rate limiting exceptions)
-- [ ] T039 [P] Implement CircuitBreaker in backend/api/errors.py for graceful degradation (Gmail API down, Twilio API down)
+- [x] T037 Create backend/api/logging_config.py with structured JSON logger (timestamp, customer_id redacted, conversation_id, channel, event_type)
+- [x] T038 [P] Implement error handlers in backend/api/errors.py (DatabaseConnectionError, KafkaPublishError, WebhookValidationError, rate limiting exceptions)
+- [x] T039 [P] Implement CircuitBreaker in backend/api/errors.py for graceful degradation (Gmail API down, Twilio API down)
 
 ### Frontend API Client Setup
 
-- [ ] T040 [P] Create frontend/src/lib/apiClient.js with axios instance configured (baseURL from NEXT_PUBLIC_API_URL, timeout, headers)
-- [ ] T041 [P] Implement submitSupportForm() function in frontend/src/lib/apiClient.js (POST to /support/submit with formData, returns ticket_id)
-- [ ] T042 [P] Implement getTicketStatus() function in frontend/src/lib/apiClient.js (GET from /support/ticket/{ticket_id}, returns ticket with messages)
-- [ ] T043 [P] Implement error handling in frontend/src/lib/apiClient.js (try/catch, user-friendly error messages, loading states)
+- [x] T040 [P] Create frontend/src/lib/apiClient.js with axios instance configured (baseURL from NEXT_PUBLIC_API_URL, timeout, headers)
+- [x] T041 [P] Implement submitSupportForm() function in frontend/src/lib/apiClient.js (POST to /support/submit with formData, returns ticket_id)
+- [x] T042 [P] Implement getTicketStatus() function in frontend/src/lib/apiClient.js (GET from /support/ticket/{ticket_id}, returns ticket with messages)
+- [x] T043 [P] Implement error handling in frontend/src/lib/apiClient.js (try/catch, user-friendly error messages, loading states)
 
 **Checkpoint**: Foundation ready - backend data layer, event streaming, orchestration, error handling complete. Frontend API client ready. User story implementation can now begin in parallel.
 
