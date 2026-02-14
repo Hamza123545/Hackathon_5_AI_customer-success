@@ -173,21 +173,21 @@
 
 #### Channel Handlers
 
-- [ ] T055 [P] [US1] Create backend/channels/gmail_handler.py with setup_push_notifications() function (Gmail API Pub/Sub webhook configuration)
-- [ ] T056 [P] [US1] Implement process_notification() in backend/channels/gmail_handler.py (fetch new messages via users.messages.list, parse sender/subject/body)
-- [ ] T057 [P] [US1] Implement send_reply() in backend/channels/gmail_handler.py (send via Gmail API with threading support, RE: [original subject])
-- [ ] T058 [US1] Implement _extract_body() in backend/channels/gmail_handler.py (parse base64 encoded email body)
-- [ ] T059 [US1] Implement Pub/Sub signature validation in backend/channels/gmail_handler.py (verify X-Goog-Signature header, reject 403 if invalid)
+- [x] T055 [P] [US1] Create backend/channels/gmail_handler.py with setup_push_notifications() function (Gmail API Pub/Sub webhook configuration)
+- [x] T056 [P] [US1] Implement process_notification() in backend/channels/gmail_handler.py (fetch new messages via users.messages.list, parse sender/subject/body)
+- [x] T057 [P] [US1] Implement send_reply() in backend/channels/gmail_handler.py (send via Gmail API with threading support, RE: [original subject])
+- [x] T058 [US1] Implement _extract_body() in backend/channels/gmail_handler.py (parse base64 encoded email body)
+- [x] T059 [US1] Implement Pub/Sub signature validation in backend/channels/gmail_handler.py (verify X-Goog-Signature header, reject 403 if invalid)
 
-- [ ] T060 [P] [US1] Create backend/channels/whatsapp_handler.py with validate_webhook() function (Twilio RequestValidator with TWILIO_AUTH_TOKEN)
-- [ ] T061 [P] [US1] Implement process_webhook() in backend/channels/whatsapp_handler.py (parse Twilio webhook: MessageSid, From, Body, ProfileName)
-- [ ] T062 [P] [US1] Implement send_message() in backend/channels/whatsapp_handler.py (send via Twilio API)
-- [ ] T063 [US1] Implement format_response() in backend/channels/whatsapp_handler.py (split long responses >300 chars into multiple messages with "..." + "Reply for more")
+- [x] T060 [P] [US1] Create backend/channels/whatsapp_handler.py with validate_webhook() function (Twilio RequestValidator with TWILIO_AUTH_TOKEN)
+- [x] T061 [P] [US1] Implement process_webhook() in backend/channels/whatsapp_handler.py (parse Twilio webhook: MessageSid, From, Body, ProfileName)
+- [x] T062 [P] [US1] Implement send_message() in backend/channels/whatsapp_handler.py (send via Twilio API)
+- [x] T063 [US1] Implement format_response() in backend/channels/whatsapp_handler.py (split long responses >300 chars into multiple messages with "..." + "Reply for more")
 
-- [ ] T064 [P] [US1] Create backend/channels/web_form_handler.py with Pydantic models (SupportFormSubmission, SupportFormResponse) validating Name (≥2 chars), Email (EmailStr), Subject (≥5 chars), Message (≥10 chars), Category (general/technical/billing/feedback/bug_report)
-- [ ] T065 [P] [US1] Implement submit_support_form() in backend/channels/web_form_handler.py (create ticket via TicketRepository, publish to Kafka fte.tickets.incoming, return ticket_id)
-- [ ] T066 [P] [US1] Implement get_ticket_status() in backend/channels/web_form_handler.py (retrieve ticket with messages via TicketRepository and MessageRepository)
-- [ ] T067 [US1] Implement CORS configuration for web form in backend/channels/web_form_handler.py (allow_origins=["*"] for development, configure for production)
+- [x] T064 [P] [US1] Create backend/channels/web_form_handler.py with Pydantic models (SupportFormSubmission, SupportFormResponse) validating Name (≥2 chars), Email (EmailStr), Subject (≥5 chars), Message (≥10 chars), Category (general/technical/billing/feedback/bug_report)
+- [x] T065 [P] [US1] Implement submit_support_form() in backend/channels/web_form_handler.py (create ticket via TicketRepository, publish to Kafka fte.tickets.incoming, return ticket_id)
+- [x] T066 [P] [US1] Implement get_ticket_status() in backend/channels/web_form_handler.py (retrieve ticket with messages via TicketRepository and MessageRepository)
+- [x] T067 [US1] Implement CORS configuration for web form in backend/channels/web_form_handler.py (allow_origins=["*"] for development, configure for production)
 
 #### Frontend Support Form Component
 
