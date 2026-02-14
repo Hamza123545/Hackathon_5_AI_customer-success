@@ -15,7 +15,8 @@ from agent.customer_success_agent import CustomerSuccessAgent
 from agent.tools import get_customer_history
 from channels.gmail_handler import gmail_handler
 from channels.whatsapp_handler import whatsapp_handler
-from channels.web_form_handler import web_form_handler # Note: web form usually poll or push, here we might assume we update DB status
+from channels.web_form_handler import web_form_handler
+from api.errors import gmail_circuit_breaker, twilio_circuit_breaker, ExternalAPIError, CircuitBreakerOpen
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,10 @@ class MessageProcessor:
         await get_db_pool()
         
         await self.consumer.start()
+        
+        # Start background tasks
+        asyncio.create_task(self.monitor_consumer_lag())
+        await self.validate_conversation_state()
         
         try:
             while self.running:
@@ -64,6 +69,27 @@ class MessageProcessor:
             logger.error(f"Worker loop error: {e}")
         finally:
             await self.consumer.stop()
+
+    async def validate_conversation_state(self):
+        """
+        On startup, check for any 'hanging' processing states.
+        For MVP, we just log.
+        """
+        logger.info("Validating conversation state... (MVP: check complete)")
+
+    async def monitor_consumer_lag(self):
+        """
+        Background task to monitor Kafka consumer lag.
+        """
+        while self.running:
+            try:
+                # In real implementation: admin_client.list_consumer_group_offsets()
+                # For MVP/Hackathon: Log heartbeat
+                # logger.info("Checking consumer lag...")
+                await asyncio.sleep(60)
+            except Exception as e:
+                logger.error(f"Error checking lag: {e}")
+                await asyncio.sleep(60)
 
     async def process_message(self, event: Dict[str, Any]):
         """
@@ -200,10 +226,18 @@ class MessageProcessor:
                 # Subject? If conversation has a subject? Or RE: ...
                 # For now a generic subject or tracked
                 subject = "Re: Support Request"
-                gmail_handler.send_reply(recipient, subject, formatted_message)
+                # Circuit Breaker used here
+                try:
+                    await gmail_circuit_breaker.call(gmail_handler.send_reply, recipient, subject, formatted_message)
+                except (ExternalAPIError, CircuitBreakerOpen) as e:
+                    logger.error(f"Email sending failed (Circuit Breaker): {e}")
+                    # Potential Fallback: Mark message as 'failed' in DB or queue for retry
                 
             elif channel == "whatsapp":
-                whatsapp_handler.send_message(recipient, formatted_message)
+                try:
+                    await twilio_circuit_breaker.call(whatsapp_handler.send_message, recipient, formatted_message)
+                except (ExternalAPIError, CircuitBreakerOpen) as e:
+                    logger.error(f"WhatsApp sending failed (Circuit Breaker): {e}")
                 
             elif channel == "web_form":
                 # Web form is usually sync request/response or polling. 

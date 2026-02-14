@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Callable, Any, Type
+from typing import Callable, Any, Type, Optional
 from functools import wraps
 from datetime import datetime, timedelta
 
@@ -39,9 +39,10 @@ class RateLimitExceeded(FTEException):
 # --- Circuit Breaker ---
 
 class CircuitBreakerOpen(FTEException):
-    def __init__(self, service: str, remote_exception: Exception):
-        super().__init__(f"Circuit breaker open for {service}", "CIRCUIT_BREAKER_OPEN")
-        self.remote_exception = remote_exception
+    def __init__(self, service: str, next_try_in: float):
+        self.service = service
+        self.next_try_in = next_try_in
+        super().__init__(f"Circuit breaker open for {service}. Retry in {next_try_in:.1f}s", "CIRCUIT_BREAKER_OPEN")
 
 class CircuitBreaker:
     def __init__(self, service_name: str, failure_threshold: int = 5, recovery_timeout: int = 60, expected_exceptions: tuple = (Exception,)):
@@ -52,30 +53,41 @@ class CircuitBreaker:
         
         self.failure_count = 0
         self.state = "CLOSED" # CLOSED, OPEN, HALF_OPEN
-        self.last_failure_time = None
+        self.last_failure_time: Optional[datetime] = None
 
-    async def call(self, f: Callable, *args, **kwargs):
+    async def call(self, func: Callable, *args, **kwargs):
         if self.state == "OPEN":
-            if (datetime.now() - self.last_failure_time).total_seconds() > self.recovery_timeout:
+            if self.last_failure_time and (datetime.now() - self.last_failure_time).total_seconds() > self.recovery_timeout:
                 self.state = "HALF_OPEN"
-                logger.info(f"Circuit {self.service_name} switching to HALF_OPEN")
+                logger.info(f"Circuit {self.service_name} switching to HALF_OPEN (probing)")
             else:
-                raise CircuitBreakerOpen(self.service_name, Exception("Circuit is OPEN"))
+                retry_in = self.recovery_timeout - (datetime.now() - self.last_failure_time).total_seconds()
+                raise CircuitBreakerOpen(self.service_name, max(0.1, retry_in))
         
         try:
-            result = await f(*args, **kwargs)
+            result = await func(*args, **kwargs)
+            
             if self.state == "HALF_OPEN":
                 self.state = "CLOSED"
                 self.failure_count = 0
                 logger.info(f"Circuit {self.service_name} recovered. Switching to CLOSED")
+            elif self.state == "CLOSED":
+                self.failure_count = 0 # Reset on success for consecutive failure counting
+                
             return result
+            
         except self.expected_exceptions as e:
             self.failure_count += 1
             self.last_failure_time = datetime.now()
-            logger.warning(f"Circuit {self.service_name} failure {self.failure_count}/{self.failure_threshold}: {e}")
+            logger.warning(f"Circuit {self.service_name} failure {self.failure_count}/{self.failure_threshold}: {str(e)}")
             
-            if self.failure_count >= self.failure_threshold:
+            if self.state == "HALF_OPEN" or self.failure_count >= self.failure_threshold:
                 self.state = "OPEN"
                 logger.error(f"Circuit {self.service_name} OPENED due to failures")
             
             raise ExternalAPIError(self.service_name, str(e))
+
+# Shared Circuit Breaker Instances
+# These should be imported and used by channel handlers
+gmail_circuit_breaker = CircuitBreaker("Gmail", failure_threshold=3, recovery_timeout=60)
+twilio_circuit_breaker = CircuitBreaker("Twilio", failure_threshold=3, recovery_timeout=60)
